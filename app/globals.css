@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== CSS 변수 (Tubegen 스타일) ===== */
+:root {
+  --background: #0C0C0C;
+  --foreground: #FFFFFF;
+  --card: #1A1A1A;
+  --card-hover: #262626;
+  --border: #2C2C2C;
+  --muted: #a3a3a3;
+  --muted-foreground: #9CA3AF;
+  --bg-secondary: #141414;
+  --accent: #FF6B00;
+  --header-height: 57px;
+}
+
+/* ===== body 기본 스타일 (Tubegen base.css 적용) ===== */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* ===== 헤딩 스타일 (Sora 폰트 + 자간 타이트) ===== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sora), var(--font-noto-sans-kr), system-ui, sans-serif;
+  letter-spacing: -0.025em;
+}
+
+/* ===== 스크롤바 (6px, transparent track) ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2C2C2C; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #404040; }
+
+/* ===== 테이블 행 호버 효과 ===== */
+@layer components {
+  .cl-table-row {
+    @apply border-b border-[var(--border)] hover:bg-[var(--card-hover)] transition-colors;
+  }
+}
+
+/* ===== 핫비디오 태그 스타일 (오렌지) ===== */
+.hot-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(255, 107, 0, 0.08);
+  color: #E65A00;
+  border: 1px solid rgba(255, 107, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.hot-tag:hover {
+  background: rgba(255, 107, 0, 0.15);
+}
+
+/* ===== 오렌지 검색 버튼 스타일 ===== */
+.cl-search-btn {
+  padding: 0.75rem 1.5rem;
+  background: #FF6B00;
+  color: white;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+.cl-search-btn:hover {
+  background: #E65A00;
+}
+.cl-search-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== 유틸리티 클래스 (Tubegen utilities.css에서 가져옴) ===== */
+
+/* 글래스모피즘 */
+.glass {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(44, 44, 44, 0.5);
+}
+
+/* 오렌지 그라디언트 배경 */
+.brand-gradient {
+  background: linear-gradient(135deg, #FF6B00, #FF8F33);
+}
+
+/* 오렌지 텍스트 그라디언트 */
+.brand-text-gradient {
+  background: linear-gradient(135deg, #FF6B00, #FF8F33);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 오렌지 글로우 효과 */
+.glow-orange {
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+}
+
+/* 호버 리프트 효과 */
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* 테이블 헤더 고정 (스크롤 시 상단에 붙음) */
+.sticky-thead th {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 30;
+  background: #111827;
+}
+
+/* 스크롤바 숨김 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

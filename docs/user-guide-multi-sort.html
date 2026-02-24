@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorLens - 다중 정렬 사용설명서</title>
+<style>
+  /* ===== 기본 리셋 & 폰트 ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap');
+  body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    background: #0C0C0C;
+    color: #fff;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ===== 레이아웃 ===== */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ===== 사이드바 (고정) ===== */
+  .sidebar {
+    position: fixed; left: 0; top: 0;
+    width: 280px; height: 100vh;
+    background: #111; border-right: 1px solid #2C2C2C;
+    padding: 32px 0; overflow-y: auto; z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid #2C2C2C;
+    margin-bottom: 20px;
+  }
+  .sidebar-logo h1 {
+    font-size: 20px; font-weight: 800;
+    background: linear-gradient(135deg, #FF6B00, #FF8F33);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .sidebar-logo p { font-size: 12px; color: #666; margin-top: 4px; }
+  .sidebar nav { padding: 0 12px; }
+  .sidebar nav a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; border-radius: 10px;
+    font-size: 14px; color: #888; text-decoration: none;
+    transition: all 0.2s; margin-bottom: 2px;
+  }
+  .sidebar nav a:hover { background: #1a1a1a; color: #ccc; }
+  .sidebar nav a.active { background: rgba(255,107,0,0.12); color: #FF6B00; font-weight: 600; }
+  .sidebar nav a .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px;
+    font-size: 11px; font-weight: 700;
+    background: #222; color: #666;
+  }
+  .sidebar nav a.active .num { background: #FF6B00; color: #fff; }
+  .sidebar .section-label {
+    padding: 20px 24px 8px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px; color: #444;
+  }
+
+  /* ===== 메인 콘텐츠 ===== */
+  .main { margin-left: 280px; flex: 1; }
+  .slide {
+    min-height: 100vh; padding: 80px 60px;
+    border-bottom: 1px solid #1a1a1a;
+    display: flex; flex-direction: column; justify-content: center;
+    max-width: 900px; margin: 0 auto;
+  }
+
+  /* ===== 타이포그래피 ===== */
+  .slide-number {
+    font-size: 12px; font-weight: 700; color: #FF6B00;
+    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .slide h2 {
+    font-size: 36px; font-weight: 800; line-height: 1.3;
+    margin-bottom: 16px; letter-spacing: -0.02em;
+  }
+  .slide h2 .accent { color: #FF6B00; }
+  .slide .subtitle {
+    font-size: 18px; color: #888; margin-bottom: 48px; font-weight: 300;
+  }
+  .slide h3 {
+    font-size: 20px; font-weight: 700; margin: 36px 0 16px;
+    color: #e5e5e5;
+  }
+  .slide p { font-size: 15px; color: #aaa; margin-bottom: 16px; }
+
+  /* ===== 히어로 슬라이드 ===== */
+  .hero { text-align: center; padding: 100px 60px; }
+  .hero h2 { font-size: 48px; margin-bottom: 20px; }
+  .hero .badge {
+    display: inline-block; padding: 6px 16px; border-radius: 20px;
+    background: rgba(255,107,0,0.12); color: #FF6B00;
+    font-size: 13px; font-weight: 600; margin-bottom: 24px;
+  }
+  .hero .subtitle { font-size: 20px; max-width: 600px; margin: 0 auto 40px; }
+
+  /* ===== 카드 ===== */
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .card {
+    background: #1a1a1a; border: 1px solid #2C2C2C; border-radius: 16px;
+    padding: 28px; transition: transform 0.2s, border-color 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); border-color: #444; }
+  .card .icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 16px;
+  }
+  .card .icon.orange { background: rgba(255,107,0,0.12); }
+  .card .icon.blue { background: rgba(59,130,246,0.12); }
+  .card .icon.green { background: rgba(16,185,129,0.12); }
+  .card .icon.purple { background: rgba(168,85,247,0.12); }
+  .card .icon.red { background: rgba(239,68,68,0.12); }
+  .card .icon.yellow { background: rgba(245,158,11,0.12); }
+  .card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #e5e5e5; }
+  .card p { font-size: 13px; color: #888; margin: 0; line-height: 1.6; }
+
+  /* ===== 스텝 (3단계 토글) ===== */
+  .steps { display: flex; flex-direction: column; gap: 20px; }
+  .step {
+    display: flex; gap: 20px; align-items: flex-start;
+    background: #1a1a1a; border: 1px solid #2C2C2C; border-radius: 16px;
+    padding: 24px 28px; transition: border-color 0.2s;
+  }
+  .step:hover { border-color: #FF6B00; }
+  .step-num {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: linear-gradient(135deg, #FF6B00, #FF8F33);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 800; color: #fff; flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-content h4 { font-size: 17px; font-weight: 700; margin-bottom: 6px; color: #e5e5e5; }
+  .step-content p { font-size: 14px; color: #888; margin: 0; }
+
+  /* ===== 인터랙티브 데모 ===== */
+  .demo-box {
+    background: #111; border: 1px solid #2C2C2C; border-radius: 16px;
+    overflow: hidden; margin: 24px 0;
+  }
+  .demo-header {
+    padding: 16px 24px; border-bottom: 1px solid #2C2C2C;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .demo-header .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .demo-header .dot.r { background: #ef4444; }
+  .demo-header .dot.y { background: #f59e0b; }
+  .demo-header .dot.g { background: #10b981; }
+  .demo-header .title { font-size: 12px; color: #666; margin-left: 8px; }
+  .demo-body { padding: 24px; }
+
+  /* 정렬 태그 시뮬레이션 */
+  .sort-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; background: #0C0C0C; border-radius: 10px;
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .sort-label { font-size: 12px; color: #666; }
+  .sort-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    background: rgba(255,107,0,0.08); border: 1px solid rgba(255,107,0,0.25);
+    color: #FF8F33; cursor: pointer; transition: all 0.2s;
+  }
+  .sort-tag:hover { background: rgba(255,107,0,0.15); }
+  .sort-tag .badge-num {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #FF6B00; color: #fff; font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sort-tag .close { opacity: 0.5; cursor: pointer; font-size: 10px; }
+  .sort-tag .close:hover { opacity: 1; }
+  .sort-reset { font-size: 12px; color: #555; cursor: pointer; }
+  .sort-reset:hover { color: #aaa; }
+
+  /* 테이블 시뮬레이션 */
+  .sim-table { width: 100%; border-collapse: collapse; }
+  .sim-table th {
+    padding: 10px 14px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    color: #666; border-bottom: 1px solid #2C2C2C;
+    text-align: left; cursor: pointer; transition: color 0.15s;
+    white-space: nowrap; user-select: none;
+  }
+  .sim-table th:hover { color: #ccc; }
+  .sim-table th.active { color: #FF6B00; }
+  .sim-table th .arrow { font-size: 13px; margin-left: 2px; }
+  .sim-table td {
+    padding: 10px 14px; font-size: 13px; color: #aaa;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .sim-table tr:hover td { background: #1a1a1a; }
+  .sim-table .num { font-variant-numeric: tabular-nums; text-align: right; color: #e5e5e5; font-weight: 500; }
+  .sim-table .dim { color: #666; }
+  .sim-table .highlight { background: rgba(255,107,0,0.04); }
+
+  /* ===== 비교 박스 ===== */
+  .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; margin: 24px 0; }
+  .compare-box {
+    background: #1a1a1a; border: 1px solid #2C2C2C; border-radius: 14px;
+    padding: 24px; text-align: center;
+  }
+  .compare-box.wrong { border-color: rgba(239,68,68,0.3); }
+  .compare-box.correct { border-color: rgba(16,185,129,0.3); }
+  .compare-box .tag {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; margin-bottom: 12px;
+  }
+  .compare-box.wrong .tag { background: rgba(239,68,68,0.12); color: #ef4444; }
+  .compare-box.correct .tag { background: rgba(16,185,129,0.12); color: #10b981; }
+  .compare-box h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #ccc; }
+  .compare-box p { font-size: 13px; color: #777; margin: 0; }
+  .compare-arrow { font-size: 24px; color: #444; }
+
+  /* ===== 수식 박스 ===== */
+  .formula-box {
+    background: #111; border: 1px solid #2C2C2C; border-radius: 14px;
+    padding: 28px; margin: 24px 0; font-family: 'Courier New', monospace;
+  }
+  .formula-title { font-size: 13px; font-weight: 700; color: #FF6B00; margin-bottom: 16px; font-family: 'Noto Sans KR', sans-serif; }
+  .formula-line { font-size: 14px; color: #aaa; margin-bottom: 8px; line-height: 1.8; }
+  .formula-line .val { color: #FF8F33; font-weight: 600; }
+  .formula-line .op { color: #555; }
+  .formula-line .result { color: #10b981; font-weight: 700; }
+  .formula-divider { border: none; border-top: 1px dashed #2C2C2C; margin: 16px 0; }
+
+  /* ===== 플로우차트 ===== */
+  .flow { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 32px 0; flex-wrap: wrap; }
+  .flow-item {
+    padding: 12px 20px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; text-align: center;
+  }
+  .flow-item.action { background: rgba(255,107,0,0.12); color: #FF6B00; border: 1px solid rgba(255,107,0,0.2); }
+  .flow-item.state { background: #1a1a1a; color: #aaa; border: 1px solid #2C2C2C; }
+  .flow-arrow { color: #444; font-size: 18px; }
+
+  /* ===== 알림 박스 ===== */
+  .callout {
+    display: flex; gap: 14px; padding: 20px 24px;
+    border-radius: 12px; margin: 20px 0;
+  }
+  .callout.tip { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); }
+  .callout.warn { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); }
+  .callout.info { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.15); }
+  .callout .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .callout .callout-text { font-size: 14px; color: #aaa; line-height: 1.7; }
+  .callout .callout-text strong { color: #e5e5e5; }
+
+  /* ===== FAQ ===== */
+  .faq-item { border-bottom: 1px solid #1a1a1a; padding: 20px 0; }
+  .faq-item:last-child { border: none; }
+  .faq-q { font-size: 15px; font-weight: 700; color: #e5e5e5; margin-bottom: 8px; }
+  .faq-q::before { content: 'Q. '; color: #FF6B00; }
+  .faq-a { font-size: 14px; color: #888; padding-left: 24px; }
+
+  /* ===== 푸터 ===== */
+  .footer {
+    text-align: center; padding: 60px;
+    border-top: 1px solid #1a1a1a; color: #444; font-size: 13px;
+  }
+
+  /* ===== 반응형 ===== */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .slide { padding: 60px 24px; }
+    .hero h2 { font-size: 32px; }
+    .card-grid, .card-grid.cols-3 { grid-template-columns: 1fr; }
+    .compare { grid-template-columns: 1fr; }
+    .compare-arrow { transform: rotate(90deg); text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- ===== 사이드바 ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>CreatorLens</h1>
+      <p>다중 정렬 사용설명서</p>
+    </div>
+    <nav>
+      <div class="section-label">시작하기</div>
+      <a href="#intro" class="active"><span class="num">1</span> 다중 정렬이란?</a>
+      <a href="#columns"><span class="num">2</span> 정렬 가능한 항목</a>
+
+      <div class="section-label">사용법</div>
+      <a href="#toggle"><span class="num">3</span> 3단계 클릭 토글</a>
+      <a href="#demo"><span class="num">4</span> 실전 데모</a>
+
+      <div class="section-label">원리 이해</div>
+      <a href="#single-vs-multi"><span class="num">5</span> 단일 vs 다중 정렬</a>
+      <a href="#formula"><span class="num">6</span> 종합 점수 계산법</a>
+
+      <div class="section-label">활용</div>
+      <a href="#usecases"><span class="num">7</span> 실전 활용 시나리오</a>
+      <a href="#tips"><span class="num">8</span> 꿀팁 & FAQ</a>
+    </nav>
+  </aside>
+
+  <!-- ===== 메인 콘텐츠 ===== -->
+  <div class="main">
+
+    <!-- ===== 슬라이드 1: 히어로 ===== -->
+    <section id="intro" class="slide hero">
+      <span class="badge">CreatorLens v2.0 Feature Guide</span>
+      <h2>
+        원하는 기준을 <span class="accent">여러 개</span> 조합해서<br>
+        최적의 영상을 찾으세요
+      </h2>
+      <p class="subtitle">
+        조회수도 높고, 구독자도 많고, 성과도 좋은 영상을<br>
+        클릭 몇 번으로 한 번에 찾아주는 <strong style="color:#FF6B00">다중 정렬</strong> 기능
+      </p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <div class="sort-tag"><span class="badge-num">1</span> 조회수 ↑ <span class="close">x</span></div>
+        <div class="sort-tag"><span class="badge-num">2</span> 구독자 ↑ <span class="close">x</span></div>
+        <div class="sort-tag"><span class="badge-num">3</span> 성과도 ↑ <span class="close">x</span></div>
+      </div>
+    </section>
+
+    <!-- ===== 슬라이드 2: 정렬 가능한 항목 ===== -->
+    <section id="columns" class="slide">
+      <span class="slide-number">02 / 정렬 가능한 항목</span>
+      <h2>총 <span class="accent">7가지</span> 기준으로 정렬할 수 있어요</h2>
+      <p class="subtitle">테이블 헤더의 각 항목을 클릭하면 정렬 기준에 추가됩니다</p>
+
+      <div class="card-grid cols-3" style="margin-bottom:24px;">
+        <div class="card">
+          <div class="icon orange">👁</div>
+          <h4>조회수</h4>
+          <p>영상이 얼마나 많이 봤는지. 숫자가 클수록 인기 있는 영상이에요.</p>
+        </div>
+        <div class="card">
+          <div class="icon blue">👥</div>
+          <h4>구독자</h4>
+          <p>채널의 구독자 수. 채널 규모를 파악할 수 있어요.</p>
+        </div>
+        <div class="card">
+          <div class="icon green">📊</div>
+          <h4>기여도</h4>
+          <p>조회수 / 구독자 비율. 구독자 대비 조회수가 높으면 "터진 영상"이에요.</p>
+        </div>
+      </div>
+      <div class="card-grid cols-3" style="margin-bottom:24px;">
+        <div class="card">
+          <div class="icon purple">🏆</div>
+          <h4>성과도</h4>
+          <p>좋아요+댓글+조회수를 종합한 점수. 영상의 퀄리티 지표예요.</p>
+        </div>
+        <div class="card">
+          <div class="icon red">🎬</div>
+          <h4>총영상수</h4>
+          <p>채널의 총 영상 개수. 적은데 조회수가 높으면 주목할 만해요.</p>
+        </div>
+        <div class="card">
+          <div class="icon yellow">📅</div>
+          <h4>게시일</h4>
+          <p>영상 업로드 날짜. 최신순/오래된순으로 정렬할 수 있어요.</p>
+        </div>
+      </div>
+      <div class="card-grid" style="max-width:320px;">
+        <div class="card">
+          <div class="icon orange">🎯</div>
+          <h4>노출확률</h4>
+          <p>내가 이 키워드로 진입했을 때 노출될 확률을 예측한 점수예요.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 슬라이드 3: 3단계 클릭 토글 ===== -->
+    <section id="toggle" class="slide">
+      <span class="slide-number">03 / 사용법</span>
+      <h2>컬럼 헤더를 <span class="accent">클릭</span>하면 3단계로 바뀌어요</h2>
+      <p class="subtitle">같은 항목을 반복 클릭하면 높은순 → 낮은순 → 제거 순서로 전환됩니다</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>첫 번째 클릭 → 높은순(↑) 추가</h4>
+            <p>아직 정렬에 없는 항목을 클릭하면, <strong style="color:#FF6B00">높은 값이 위에 오는 순서(내림차순)</strong>로 정렬 기준에 추가됩니다.<br>
+            예: "조회수" 클릭 → <span style="color:#FF8F33">조회수 100만 → 50만 → 10만</span> 순서</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>두 번째 클릭 → 낮은순(↓)으로 전환</h4>
+            <p>이미 높은순(↑)인 항목을 다시 클릭하면, <strong style="color:#3b82f6">낮은 값이 위에 오는 순서(오름차순)</strong>로 바뀝니다.<br>
+            예: "조회수↑" 다시 클릭 → <span style="color:#60a5fa">조회수 10만 → 50만 → 100만</span> 순서</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>세 번째 클릭 → 정렬 기준에서 제거</h4>
+            <p>이미 낮은순(↓)인 항목을 다시 클릭하면, 해당 항목이 <strong style="color:#ef4444">정렬 기준에서 완전히 사라집니다.</strong><br>
+            또는 정렬 태그의 <strong>x 버튼</strong>을 눌러도 개별 제거할 수 있어요.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow" style="margin-top:40px;">
+        <div class="flow-item action">클릭!</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item state">높은순 ↑</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item action">클릭!</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item state">낮은순 ↓</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item action">클릭!</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item state" style="color:#ef4444;">제거됨</div>
+      </div>
+
+      <div class="callout tip" style="margin-top:32px;">
+        <span class="callout-icon">💡</span>
+        <div class="callout-text">
+          <strong>"초기화" 버튼</strong>을 누르면 모든 정렬 기준이 한 번에 초기화되고,<br>
+          YouTube API가 반환한 <strong>검색 관련성 순서</strong>로 돌아갑니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 슬라이드 4: 실전 데모 ===== -->
+    <section id="demo" class="slide">
+      <span class="slide-number">04 / 실전 데모</span>
+      <h2>이렇게 <span class="accent">보입니다</span></h2>
+      <p class="subtitle">"조회수"를 클릭한 뒤 "구독자"를 클릭하면 두 기준이 합쳐집니다</p>
+
+      <!-- 데모 1: 정렬 전 -->
+      <h3>정렬 전 (기본 상태)</h3>
+      <div class="demo-box">
+        <div class="demo-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="title">CreatorLens - 영상 검색 결과</span>
+        </div>
+        <div class="demo-body">
+          <div class="sort-bar">
+            <span class="sort-label">정렬:</span>
+            <span style="font-size:12px; color:#666;">없음 (검색 관련성 순)</span>
+          </div>
+          <table class="sim-table">
+            <thead>
+              <tr>
+                <th>영상</th>
+                <th>조회수 <span class="arrow" style="color:#555">↕</span></th>
+                <th>구독자 <span class="arrow" style="color:#555">↕</span></th>
+                <th>성과도</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>먹방 브이로그</td><td class="num">50만</td><td class="num">30만</td><td class="dim">보통</td></tr>
+              <tr><td>ASMR 치킨</td><td class="num">200만</td><td class="num">100만</td><td class="dim">좋음</td></tr>
+              <tr><td>길거리 음식</td><td class="num">10만</td><td class="num">5만</td><td class="dim">매우좋음</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 데모 2: 조회수 클릭 후 -->
+      <h3>① "조회수" 클릭 후</h3>
+      <div class="demo-box">
+        <div class="demo-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="title">조회수 높은순으로 정렬됨</span>
+        </div>
+        <div class="demo-body">
+          <div class="sort-bar">
+            <span class="sort-label">정렬:</span>
+            <div class="sort-tag"><span class="badge-num">1</span> 조회수 ↑ <span class="close">x</span></div>
+            <span class="sort-reset">초기화</span>
+          </div>
+          <table class="sim-table">
+            <thead>
+              <tr>
+                <th>영상</th>
+                <th class="active">조회수 <span class="badge-num" style="font-size:9px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#FF6B00;color:#fff;vertical-align:middle;">1</span> ↑</th>
+                <th>구독자 <span class="arrow" style="color:#555">↕</span></th>
+                <th>성과도</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight"><td>ASMR 치킨</td><td class="num">200만</td><td class="num">100만</td><td class="dim">좋음</td></tr>
+              <tr><td>먹방 브이로그</td><td class="num">50만</td><td class="num">30만</td><td class="dim">보통</td></tr>
+              <tr><td>길거리 음식</td><td class="num">10만</td><td class="num">5만</td><td class="dim">매우좋음</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 데모 3: 구독자도 클릭 후 -->
+      <h3>② "구독자"도 클릭 → 다중 정렬!</h3>
+      <div class="demo-box">
+        <div class="demo-header">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="title">조회수 + 구독자 종합 점수로 정렬됨</span>
+        </div>
+        <div class="demo-body">
+          <div class="sort-bar">
+            <span class="sort-label">정렬:</span>
+            <div class="sort-tag"><span class="badge-num">1</span> 조회수 ↑ <span class="close">x</span></div>
+            <div class="sort-tag"><span class="badge-num">2</span> 구독자 ↑ <span class="close">x</span></div>
+            <span class="sort-reset">초기화</span>
+          </div>
+          <table class="sim-table">
+            <thead>
+              <tr>
+                <th>영상</th>
+                <th class="active">조회수 <span class="badge-num" style="font-size:9px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#FF6B00;color:#fff;vertical-align:middle;">1</span> ↑</th>
+                <th class="active">구독자 <span class="badge-num" style="font-size:9px;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#FF6B00;color:#fff;vertical-align:middle;">2</span> ↑</th>
+                <th>성과도</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight"><td>ASMR 치킨</td><td class="num">200만</td><td class="num">100만</td><td style="color:#10b981;">종합 1위</td></tr>
+              <tr><td>먹방 브이로그</td><td class="num">50만</td><td class="num">30만</td><td style="color:#f59e0b;">종합 2위</td></tr>
+              <tr><td>길거리 음식</td><td class="num">10만</td><td class="num">5만</td><td style="color:#ef4444;">종합 3위</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-text">
+          <strong>숫자 ①②는 "클릭한 순서"이지 "우선순위"가 아닙니다!</strong><br>
+          두 기준이 동등한 비중으로 합산되어 종합 랭킹이 만들어집니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 슬라이드 5: 단일 vs 다중 정렬 ===== -->
+    <section id="single-vs-multi" class="slide">
+      <span class="slide-number">05 / 원리</span>
+      <h2><span class="accent">단일 정렬</span>과 <span class="accent">다중 정렬</span>은 다르게 동작해요</h2>
+      <p class="subtitle">기준이 1개일 때와 2개 이상일 때 정렬 방식이 완전히 달라집니다</p>
+
+      <div class="compare">
+        <div class="compare-box">
+          <span class="tag" style="background:rgba(59,130,246,0.12);color:#3b82f6;">기준 1개</span>
+          <h4>단일 정렬</h4>
+          <p style="font-size:14px;color:#aaa;">해당 값을 기준으로<br><strong style="color:#e5e5e5">직접 크기 비교</strong>하여 정렬</p>
+          <div style="margin-top:16px;padding:12px;background:#111;border-radius:8px;font-size:13px;color:#666;">
+            예: 조회수 ↑<br>
+            <span style="color:#e5e5e5;">200만 → 50만 → 10만</span>
+          </div>
+        </div>
+
+        <div class="compare-arrow">≠</div>
+
+        <div class="compare-box">
+          <span class="tag" style="background:rgba(255,107,0,0.12);color:#FF6B00;">기준 2개+</span>
+          <h4>다중 정렬 (종합 점수)</h4>
+          <p style="font-size:14px;color:#aaa;">각 기준의 값을 0~1로 변환 후<br><strong style="color:#e5e5e5">합산한 종합 점수</strong>로 정렬</p>
+          <div style="margin-top:16px;padding:12px;background:#111;border-radius:8px;font-size:13px;color:#666;">
+            예: 조회수↑ + 구독자↑<br>
+            <span style="color:#e5e5e5;">점수 2.0 → 1.0 → 0.0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare" style="margin-top:40px;">
+        <div class="compare-box wrong">
+          <span class="tag">이것이 아닙니다 X</span>
+          <h4>일반적인 다중 정렬</h4>
+          <p>조회수로 먼저 정렬하고,<br>조회수가 같을 때만 구독자로 정렬<br><br>
+          <span style="color:#666;font-size:12px;">예: SQL의 ORDER BY 조회수, 구독자</span></p>
+        </div>
+
+        <div class="compare-arrow">→</div>
+
+        <div class="compare-box correct">
+          <span class="tag">CreatorLens 방식 O</span>
+          <h4>종합 랭킹 정렬</h4>
+          <p>조회수와 구독자를 모두 고려해<br>종합적으로 뛰어난 영상을 위로<br><br>
+          <span style="color:#666;font-size:12px;">모든 기준이 동등한 비중으로 합산</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 슬라이드 6: 종합 점수 계산법 ===== -->
+    <section id="formula" class="slide">
+      <span class="slide-number">06 / 계산 원리</span>
+      <h2>종합 점수는 이렇게 <span class="accent">계산</span>됩니다</h2>
+      <p class="subtitle">어려운 수식처럼 보이지만, 비유로 쉽게 이해할 수 있어요</p>
+
+      <div class="callout tip">
+        <span class="callout-icon">🎓</span>
+        <div class="callout-text">
+          <strong>비유: 학교 성적표</strong><br>
+          국어 95점, 수학 80점인 학생이 있다면, 그냥 175점으로 합산할 수 없죠?<br>
+          국어는 100점 만점이고 수학은 200점 만점일 수도 있으니까요.<br>
+          그래서 <strong>모든 과목을 0~100점 사이로 맞춘 다음</strong> 합산합니다.<br>
+          CreatorLens의 다중 정렬도 정확히 같은 원리입니다!
+        </div>
+      </div>
+
+      <h3>실제 계산 예시</h3>
+      <p>정렬 기준: ①조회수↑ ②구독자↑ &nbsp;/ &nbsp;영상 3개</p>
+
+      <div class="formula-box">
+        <div class="formula-title">Step 1. 원래 값 확인</div>
+        <div class="formula-line">영상A: 조회수 <span class="val">100만</span> &nbsp; 구독자 <span class="val">50만</span></div>
+        <div class="formula-line">영상B: 조회수 <span class="val">50만</span> &nbsp;&nbsp; 구독자 <span class="val">30만</span></div>
+        <div class="formula-line">영상C: 조회수 <span class="val">10만</span> &nbsp;&nbsp; 구독자 <span class="val">10만</span></div>
+
+        <hr class="formula-divider">
+
+        <div class="formula-title">Step 2. 0~1 사이로 변환 (정규화)</div>
+        <div class="formula-line" style="color:#666;">공식: (내 값 - 최솟값) / (최댓값 - 최솟값)</div>
+        <div class="formula-line" style="margin-top:8px;">
+          영상A: 조회수 <span class="op">(100만-10만)/(100만-10만)</span> = <span class="val">1.0</span> &nbsp;
+          구독자 <span class="op">(50만-10만)/(50만-10만)</span> = <span class="val">1.0</span>
+        </div>
+        <div class="formula-line">
+          영상B: 조회수 <span class="op">(50만-10만)/(100만-10만)</span> &nbsp;= <span class="val">0.44</span>
+          구독자 <span class="op">(30만-10만)/(50만-10만)</span> = <span class="val">0.50</span>
+        </div>
+        <div class="formula-line">
+          영상C: 조회수 <span class="op">(10만-10만)/(100만-10만)</span> &nbsp;= <span class="val">0.0</span> &nbsp;
+          구독자 <span class="op">(10만-10만)/(50만-10만)</span> = <span class="val">0.0</span>
+        </div>
+
+        <hr class="formula-divider">
+
+        <div class="formula-title">Step 3. 합산 → 종합 점수!</div>
+        <div class="formula-line">영상A: 1.0 + 1.0 = <span class="result">2.0점 🥇</span></div>
+        <div class="formula-line">영상B: 0.44 + 0.50 = <span class="result">0.94점 🥈</span></div>
+        <div class="formula-line">영상C: 0.0 + 0.0 = <span class="result">0.0점 🥉</span></div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-text">
+          <strong>↓(낮은순) 방향은 점수가 뒤집힙니다</strong><br>
+          "구독자↓"로 설정하면, 구독자가 <strong>적을수록</strong> 높은 점수를 받아요. <br>
+          (공식: 1 - 정규화값)&nbsp; 소규모 채널 위주로 찾을 때 유용합니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 슬라이드 7: 활용 시나리오 ===== -->
+    <section id="usecases" class="slide">
+      <span class="slide-number">07 / 실전 활용</span>
+      <h2>이런 상황에서 <span class="accent">다중 정렬</span>을 쓰세요</h2>
+      <p class="subtitle">목적에 따라 기준을 조합하면 원하는 영상을 정확히 찾을 수 있습니다</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="icon orange">🔥</div>
+          <h4>터진 영상 찾기</h4>
+          <p>
+            <strong>조합:</strong> 기여도 ↑ + 성과도 ↑<br><br>
+            구독자 대비 조회수가 폭발적이고<br>
+            참여율(좋아요/댓글)도 높은 영상을 찾아줍니다.
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon green">🌱</div>
+          <h4>소규모 채널의 대박 영상</h4>
+          <p>
+            <strong>조합:</strong> 조회수 ↑ + 구독자 ↓<br><br>
+            조회수는 높은데 구독자는 적은 영상.<br>
+            진입 장벽이 낮은 블루오션 키워드를 찾을 때 유용해요.
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon blue">📈</div>
+          <h4>대형 채널 벤치마킹</h4>
+          <p>
+            <strong>조합:</strong> 구독자 ↑ + 성과도 ↑<br><br>
+            구독자도 많고 성과도도 높은 영상.<br>
+            업계 TOP 크리에이터들의 인기 콘텐츠를 분석할 때.
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon purple">🎯</div>
+          <h4>노출 가능성 높은 영상</h4>
+          <p>
+            <strong>조합:</strong> 노출확률 ↑ + 조회수 ↑<br><br>
+            내가 이 키워드로 영상을 올렸을 때<br>
+            노출될 확률이 높으면서 시장도 큰 영상.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout tip" style="margin-top:32px;">
+        <span class="callout-icon">💡</span>
+        <div class="callout-text">
+          <strong>채널 검색 페이지에서도 동일하게 작동합니다!</strong><br>
+          구독자, 조회수대비 구독전환, 일평균 구독전환, 영상성과, 성장속도 등<br>
+          8가지 기준으로 다중 정렬하여 최적의 채널을 찾을 수 있어요.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 슬라이드 8: 꿀팁 & FAQ ===== -->
+    <section id="tips" class="slide">
+      <span class="slide-number">08 / 꿀팁 & FAQ</span>
+      <h2>알아두면 좋은 <span class="accent">꿀팁</span></h2>
+      <p class="subtitle">자주 묻는 질문과 함께 핵심 팁을 모았습니다</p>
+
+      <div class="card-grid" style="margin-bottom:40px;">
+        <div class="card">
+          <div class="icon green">✅</div>
+          <h4>정렬 상태 자동 저장</h4>
+          <p>다른 페이지에 갔다가 돌아와도 정렬 상태가 그대로 유지됩니다. 매번 다시 설정할 필요 없어요!</p>
+        </div>
+        <div class="card">
+          <div class="icon blue">♾️</div>
+          <h4>무한 스크롤 + 정렬 유지</h4>
+          <p>스크롤을 내려 새 영상이 로드되어도 설정한 정렬 기준이 사라지지 않습니다.</p>
+        </div>
+        <div class="card">
+          <div class="icon orange">🏷️</div>
+          <h4>태그로 한눈에 확인</h4>
+          <p>테이블 위 정렬 태그 바에서 현재 정렬 기준과 방향(↑↓)을 바로 확인할 수 있어요.</p>
+        </div>
+        <div class="card">
+          <div class="icon red">✕</div>
+          <h4>개별 제거 가능</h4>
+          <p>태그의 x 버튼으로 특정 기준만 제거할 수 있어요. 전체 초기화는 "초기화" 버튼을 누르세요.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:0;">자주 묻는 질문</h3>
+      <div style="background:#1a1a1a;border:1px solid #2C2C2C;border-radius:14px;padding:8px 24px;">
+        <div class="faq-item">
+          <div class="faq-q">숫자 ①②가 우선순위인가요?</div>
+          <div class="faq-a"><strong>아닙니다.</strong> 클릭한 순서를 표시할 뿐, 모든 기준은 동등한 비중으로 합산됩니다. ①이 ②보다 더 중요하게 반영되지 않아요.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">기준을 몇 개까지 추가할 수 있나요?</div>
+          <div class="faq-a">7개 항목(조회수, 구독자, 기여도, 성과도, 총영상수, 게시일, 노출확률) 모두 추가 가능합니다. 다만, 2~3개가 가장 실용적이에요.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">정렬을 아무것도 안 하면 어떤 순서인가요?</div>
+          <div class="faq-a">YouTube API가 제공하는 <strong>검색 관련성 순서</strong>로 표시됩니다. 키워드와 가장 관련 높은 영상이 먼저 나와요.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">채널 검색에서 "초기화"를 누르면 정렬이 완전히 사라지나요?</div>
+          <div class="faq-a">채널 검색에서는 초기화하면 <strong>기본값(구독자 높은순)</strong>으로 돌아갑니다. 완전히 비워지지 않아요.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">종합 점수가 동점이면 어떻게 되나요?</div>
+          <div class="faq-a">종합 점수가 같은 영상끼리는 <strong>최신 게시일</strong> 순서로 정렬됩니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 푸터 ===== -->
+    <footer class="footer">
+      CreatorLens &copy; 2026 &mdash; 다중 정렬 사용설명서 v1.0
+    </footer>
+
+  </div>
+</div>
+
+<!-- ===== 사이드바 활성 항목 자동 변경 ===== -->
+<script>
+  const sections = document.querySelectorAll('.slide[id]');
+  const navLinks = document.querySelectorAll('.sidebar nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const activeLink = document.querySelector(`.sidebar nav a[href="#${entry.target.id}"]`);
+        if (activeLink) activeLink.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -60% 0px' });
+
+  sections.forEach(section => observer.observe(section));
+</script>
+
+</body>
+</html>
